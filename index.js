@@ -25,7 +25,9 @@ async function run() {
     // await client.connect();
     //Users code start from here:
 	const database = client.db('foodrocket')
+    const users = database.collection('users')
     const restaurants = database.collection('restaurants')
+    const orders = database.collection('orders')
     
 
 
