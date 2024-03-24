@@ -27,7 +27,9 @@ async function run() {
 	const database = client.db('foodrocket')
     const users = database.collection('users')
     const restaurants = database.collection('restaurants')
+    const menu = database.collection('menu')
     const orders = database.collection('orders')
+    const favorite = database.collection('favorite')
     
 
 
