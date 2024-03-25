@@ -8,7 +8,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.db_user}:${process.env.db_pass}@cluster0.rkpusfk.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -86,8 +86,55 @@ async function run() {
             res.send(result)
         })
 
-        
+
         /* USERS END */
+        /* RESTAURANTS START */
+
+
+        //restaurants >> Create
+        app.post('/restaurants', async (req, res) => {
+            const restaurant = req.body
+
+            const result = await restaurants.insertOne(restaurant)
+            res.send(result)
+        })
+        //restaurants >> Read
+        app.get('/restaurants', async (req, res) => {
+            const result = await restaurants.find().toArray()
+            res.send(result)
+        })
+        //restaurants/_id >> Read one
+        app.get('/restaurants/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await restaurants.findOne(filter)
+            res.send(result)
+        })
+        //restaurants/_id >> update one
+        app.put('/restaurants/:id', async (req, res) => {
+            const id = req.params.id
+            const restaurant = req.body
+
+            const filter = { _id: new ObjectId(id) }
+            const updatedRestaurant = {
+                $set: { ...restaurant }
+            }
+            const options = { upsert: true }
+
+            const result = await restaurants.updateOne(filter, updatedRestaurant, options)
+            res.send(result)
+        })
+        //restaurants/_id >> Delete
+        app.delete('/restaurants/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await restaurants.deleteOne(filter)
+            res.send(result)
+        })
+
+        /* RESTAURANTS END */
 
 
         // Send a ping to confirm a successful connection
