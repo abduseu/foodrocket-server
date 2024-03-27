@@ -134,7 +134,57 @@ async function run() {
             res.send(result)
         })
 
+
         /* RESTAURANTS END */
+        /* MENU START */
+
+        //menu >> Create
+        app.post('/menu', async (req, res) => {
+            const item = req.body
+
+            const result = await menu.insertOne(item)
+            res.send(result)
+        })
+        //menu/_id >> Read one
+        app.get('/menu/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await menu.findOne(filter)
+            res.send(result)
+        })
+        //menu?email= >> Read query
+        app.get('/menu-query', async (req, res) => {
+            const email = req.query.email;
+            const filter = { restaurantId: email };
+            const result = await menu.find(filter).toArray();
+            res.send(result);
+        });
+        //menu/_id >> update one
+        app.put('/menu/:id', async (req, res) => {
+            const id = req.params.id
+            const item = req.body
+
+            const filter = { _id: new ObjectId(id) }
+            const updatedMenu = {
+                $set: { ...item }
+            }
+
+            const result = await menu.updateOne(filter, updatedMenu)
+            res.send(result)
+        })
+        //menu/_id >> Delete
+        app.delete('/menu/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await menu.deleteOne(filter)
+            res.send(result)
+        })
+
+
+
+        /* MENU END */
 
 
         // Send a ping to confirm a successful connection
