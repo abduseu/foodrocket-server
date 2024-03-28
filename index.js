@@ -34,6 +34,7 @@ async function run() {
 
 
         /* START USERS */
+
         //Users >> Create (upsert)
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -46,13 +47,11 @@ async function run() {
             const result = await users.insertOne(user);
             res.send(result);
         });
-
         //Users >> read all
         app.get('/users', async (req, res) => {
             const result = await users.find().toArray()
             res.send(result)
         })
-
         //Users >> read one
         app.get('/users/:id', async (req, res) => {
             const id = req.params.id
@@ -61,7 +60,6 @@ async function run() {
             const result = await users.findOne(filter)
             res.send(result)
         })
-
         //Users >> update one (change role)
         app.put('/manage-users/:id', async (req, res) => {
             const id = req.params.id
@@ -76,7 +74,6 @@ async function run() {
             const result = await users.updateOne(filter, updatedUser)
             res.send(result)
         })
-
         //users/_id >> Delete
         app.delete('/manage-users/:id', async (req, res) => {
             const id = req.params.id
@@ -160,6 +157,14 @@ async function run() {
             const result = await menu.find(filter).toArray();
             res.send(result);
         });
+        //menu/restaurantId >> Read (filter)
+        app.get('/menu-restaurantId/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { restaurantId: id }
+            const result = await menu.find(filter).toArray();
+            res.send(result)
+        })
         //menu/_id >> update one
         app.put('/menu/:id', async (req, res) => {
             const id = req.params.id
