@@ -30,6 +30,7 @@ async function run() {
         const menu = database.collection('menu')
         const orders = database.collection('orders')
         const favorite = database.collection('favorite')
+        const checkout_cart = database.collection('cart')
 
 
 
@@ -85,6 +86,35 @@ async function run() {
 
 
         /* USERS END */
+        /* CART START */
+
+        
+        //cart >> Create
+        app.post('/cart', async (req, res) => {
+            const item = req.body
+
+            const result = await checkout_cart.insertOne(item)
+            res.send(result)
+        })
+        //Cart?_id >> Read query
+        app.get('/cart', async (req, res) => {
+            const email = req.query.email;
+
+            const filter = { userId: email };
+            const result = await checkout_cart.find(filter).toArray();
+            res.send(result);
+        });
+        //Cart/_id >> Delete
+        app.delete('/cart/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await checkout_cart.deleteOne(filter)
+            res.send(result)
+        })
+
+
+        /* CART END */
         /* RESTAURANTS START */
 
 
@@ -186,7 +216,6 @@ async function run() {
             const result = await menu.deleteOne(filter)
             res.send(result)
         })
-
 
 
         /* MENU END */
