@@ -29,7 +29,7 @@ async function run() {
         const restaurants = database.collection('restaurants')
         const menu = database.collection('menu')
         const orders = database.collection('orders')
-        const favorite = database.collection('favorite')
+        const favorites = database.collection('favorites')
         const checkout_cart = database.collection('cart')
 
 
@@ -88,7 +88,7 @@ async function run() {
         /* USERS END */
         /* CART START */
 
-        
+
         //cart >> Create
         app.post('/cart', async (req, res) => {
             const item = req.body
@@ -96,7 +96,7 @@ async function run() {
             const result = await checkout_cart.insertOne(item)
             res.send(result)
         })
-        //Cart?_id >> Read query
+        //Cart?email >> Read query
         app.get('/cart', async (req, res) => {
             const email = req.query.email;
 
@@ -115,6 +115,65 @@ async function run() {
 
 
         /* CART END */
+        /* ORDERS START */
+
+
+        //orders >> Create
+        app.post('/orders', async (req, res) => {
+            const order = req.body
+
+            const result = await orders.insertOne(order)
+            res.send(result)
+        })
+        //orders/_id >> Read one
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await orders.findOne(filter)
+            res.send(result)
+        })
+        //orders?email >> Read query (placed orders)
+        app.get('/placed-orders', async (req, res) => {
+            const email = req.query.email;
+
+            const filter = { userId: email };
+            const result = await orders.find(filter).sort({ _id: -1 }).toArray()
+            res.send(result)
+        })
+        //orders?id >> Read query (received orders)
+        app.get('/received-orders', async (req, res) => {
+            const id = req.query.id;
+
+            const filter = { restaurantId: id };
+            const result = await orders.find(filter).sort({ _id: -1 }).toArray()
+            res.send(result)
+        })
+        //orders/_id >> Update
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id
+            const order = req.body
+
+            const filter = { _id: new ObjectId(id) }
+            const updateOrder = {
+                $set: {
+                    status: order.status,
+                }
+            }
+            const result = await orders.updateOne(filter, updateOrder)
+            res.send(result)
+        })
+        //orders/_id >> Delete
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await orders.deleteOne(filter)
+            res.send(result)
+        })
+
+
+        /* ORDERS END */
         /* RESTAURANTS START */
 
 
@@ -128,6 +187,14 @@ async function run() {
         //restaurants >> Read
         app.get('/restaurants', async (req, res) => {
             const result = await restaurants.find().toArray()
+            res.send(result)
+        })
+        //restaurant-email?email >> Read one (query)
+        app.get('/restaurant-email', async (req, res) => {
+            const email = req.query.email
+
+            const filter = { email: email }
+            const result = await restaurants.findOne(filter)
             res.send(result)
         })
         //restaurants/_id >> Read one
