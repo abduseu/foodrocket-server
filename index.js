@@ -115,6 +115,35 @@ async function run() {
 
 
         /* CART END */
+        /* FAVORITE START */
+
+
+        //favorite >> Create
+        app.post('/favorite', async (req, res) => {
+            const restaurant = req.body
+
+            const result = await favorites.insertOne(restaurant)
+            res.send(result)
+        })
+        //favorite?email >> Read query
+        app.get('/favorite', async (req, res) => {
+            const email = req.query.email;
+
+            const filter = { userId: email };
+            const result = await favorites.find(filter).toArray();
+            res.send(result);
+        });
+        //favorite/_id >> Delete
+        app.delete('/favorite/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { restaurantId: id }
+            const result = await favorites.deleteOne(filter)
+            res.send(result)
+        })
+
+
+        /* FAVORITE END */
         /* ORDERS START */
 
 
