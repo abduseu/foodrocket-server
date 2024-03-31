@@ -36,7 +36,7 @@ async function run() {
 
         /* START USERS */
 
-        //Users >> Create (upsert)
+        //Users >> Create
         app.post('/users', async (req, res) => {
             const user = req.body;
 
@@ -61,18 +61,18 @@ async function run() {
             const result = await users.findOne(filter)
             res.send(result)
         })
-        //Users >> update one (change role)
+        //Users >> update one (change userInfo)
         app.put('/manage-users/:id', async (req, res) => {
             const id = req.params.id
-            const changeRole = req.body
+            const userInfo = req.body
 
             const filter = { _id: new ObjectId(id) }
             const updatedUser = {
-                $set: {
-                    role: changeRole.role
-                }
+                $set: { ...userInfo }
             }
-            const result = await users.updateOne(filter, updatedUser)
+            const options = { upsert: true }
+
+            const result = await users.updateOne(filter, updatedUser, options)
             res.send(result)
         })
         //users/_id >> Delete
