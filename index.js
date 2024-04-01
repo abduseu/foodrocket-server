@@ -154,6 +154,11 @@ async function run() {
             const result = await orders.insertOne(order)
             res.send(result)
         })
+        //orders >> read all
+        app.get('/orders', async (req, res) => {
+            const result = await orders.find().toArray()
+            res.send(result)
+        })
         //orders/_id >> Read one
         app.get('/orders/:id', async (req, res) => {
             const id = req.params.id
@@ -181,15 +186,15 @@ async function run() {
         //orders/_id >> Update
         app.put('/orders/:id', async (req, res) => {
             const id = req.params.id
-            const order = req.body
+            const orderInfo = req.body
 
             const filter = { _id: new ObjectId(id) }
             const updateOrder = {
-                $set: {
-                    status: order.status,
-                }
+                $set: { ...orderInfo }
             }
-            const result = await orders.updateOne(filter, updateOrder)
+            const options = { upsert: true }
+
+            const result = await orders.updateOne(filter, updateOrder, options)
             res.send(result)
         })
         //orders/_id >> Delete
