@@ -31,6 +31,7 @@ async function run() {
         const orders = database.collection('orders')
         const favorites = database.collection('favorites')
         const checkout_cart = database.collection('cart')
+        const foodbank = database.collection('foodbank')
 
 
 
@@ -320,6 +321,54 @@ async function run() {
 
 
         /* MENU END */
+        /* FOODBANK START */
+
+
+        //foodbank >> create
+        app.post('/foodbank', async (req, res) => {
+            const donation = req.body
+
+            const result = await foodbank.insertOne(donation)
+            res.send(result)
+        })
+        //foodbank >> read all
+        app.get('/foodbank', async (req, res) => {
+            const result = await foodbank.find().toArray()
+            res.send(result)
+        })
+        //foodbank?email >> Read query (placed donations)
+        app.get('/placed-donations', async (req, res) => {
+            const email = req.query.email;
+
+            const filter = { restaurantEmail: email };
+            const result = await foodbank.find(filter).sort({ _id: -1 }).toArray()
+            res.send(result)
+        })
+        //foodbank/_id >> Update
+        app.put('/foodbank/:id', async (req, res) => {
+            const id = req.params.id
+            const donationInfo = req.body
+
+            const filter = { _id: new ObjectId(id) }
+            const updateDonation = {
+                $set: { ...donationInfo }
+            }
+            const options = { upsert: true }
+
+            const result = await foodbank.updateOne(filter, updateDonation, options)
+            res.send(result)
+        })
+        //foodbank/_id >> Delete
+        app.delete('/foodbank/:id', async (req, res) => {
+            const id = req.params.id
+
+            const filter = { _id: new ObjectId(id) }
+            const result = await foodbank.deleteOne(filter)
+            res.send(result)
+        })
+
+
+        /* FOODBANK END */
 
 
         // Send a ping to confirm a successful connection
