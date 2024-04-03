@@ -138,7 +138,7 @@ async function run() {
         app.delete('/favorite/:id', async (req, res) => {
             const id = req.params.id
 
-            const filter = { restaurantId: id }
+            const filter = { _id: new ObjectId(id) }
             const result = await favorites.deleteOne(filter)
             res.send(result)
         })
